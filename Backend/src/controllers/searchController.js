@@ -16,7 +16,7 @@ async function searchBooks(req, res) {
     });
 
     const books = response.data.items.map(item => ({
-      id: item.id,
+      bookId: item.id,
       title: item.volumeInfo.title,
       authors: item.volumeInfo.authors,
       imageUrl: item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : null,
@@ -53,7 +53,7 @@ async function getSearchHistoryByUserId(req, res) {
 
       const bookData = response.data.items[0].volumeInfo;
       const book = {
-        id: response.data.items[0].id,
+        bookId: response.data.items[0].id,
         title: bookData.title,
         authors: bookData.authors,
         imageUrl: bookData.imageLinks ? bookData.imageLinks.thumbnail : null,

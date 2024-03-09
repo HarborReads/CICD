@@ -12,7 +12,7 @@ async function connectToMongoDB() {
       await client.connect();
   
       const database = client.db('harborreads');
-      const collection = database.collection('BookData');
+      const collection = database.collection('metadata');
   
       const cursor = collection.find({});
   
