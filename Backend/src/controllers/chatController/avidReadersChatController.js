@@ -89,7 +89,7 @@ async function aRgenerateResponse(req, res) {
     }
 }
 
-async function generateRecommendation(req, res) {
+async function aRgenerateRecommendation(req, res) {
     const { messages } = req.body;
     
     // Collect all user messages (questions and answers)
@@ -110,8 +110,8 @@ async function generateRecommendation(req, res) {
 
 
 module.exports = {
-    startConversation,
-    generateResponse,
-    generateRecommendation
+    aRstartConversation,
+    aRgenerateResponse,
+    aRgenerateRecommendation
 
 };

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const {Shelf}=require('../models/Library');
 
 exports.signup = async (req, res) => {
   try {
@@ -17,8 +18,12 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
+
+    const defaultShelf = new Shelf({ name: `${username}s Shelf`, books: [] });
+    await defaultShelf.save();
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, email, password: hashedPassword });
+    const user = new User({ username, email, password: hashedPassword ,defaultShelf:defaultShelf._id});
     await user.save();
 
     // Create session upon successful signup

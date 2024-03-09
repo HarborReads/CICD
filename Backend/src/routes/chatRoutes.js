@@ -1,23 +1,23 @@
-
 const express = require('express');
 const router = express.Router();
 
-const {startConversation,generateResponse,generateRecommendation} = require('../controllers/chatController/avidReadersChatController');
-
-router.post('/avidReadersChat/startConversation', startConversation);
-router.post('/avidReadersChat/generateResponse', generateResponse);
-router.post('/avidReadersChat/generateRecommendation',generateRecommendation);
-const {aRstartConversation,aRgenerateResponse} = require('../controllers/chatController/avidReadersChatController');
-const {nRstartConversation,nRgenerateResponse} = require('../controllers/chatController/newReadersChatController');
-const {bookChatStartConversation,bookChatGenerateResponse} = require('../controllers/chatController/bookChatController');
+const {aRstartConversation,aRgenerateResponse,aRgenerateRecommendation} = require('../controllers/chatController/avidReadersChatController');
+// const {nRstartConversation,nRgenerateResponse,nRgenerateRecommendation} = require('../controllers/chatController/newReadersChatController');
+// const {bookChatStartConversation,bookChatGenerateResponse,bCgenerateRecommendation} = require('../controllers/chatController/bookChatController');
 
 router.post('/avidReadersChat/startConversation', aRstartConversation);
 router.post('/avidReadersChat/generateResponse', aRgenerateResponse);
+router.post('/avidReadersChat/generateRecommendation',aRgenerateRecommendation);
 
-router.post('/newReadersChat/startConversation', nRstartConversation);
-router.post('/newReadersChat/generateResponse', nRgenerateResponse);
 
-router.post('/bookChat/startConversation', bookChatStartConversation);
-router.post('/bookChat/generateResponse', bookChatGenerateResponse);
+// router.post('/newReadersChat/startConversation', nRstartConversation);
+// router.post('/newReadersChat/generateResponse', nRgenerateResponse);
+// router.post('/avidReadersChat/generateRecommendation',nRgenerateRecommendation);
+
+
+// router.post('/bookChat/startConversation', bookChatStartConversation);
+// router.post('/bookChat/generateResponse', bookChatGenerateResponse);
+// router.post('/avidReadersChat/generateRecommendation',bCgenerateRecommendation);
+
 
 module.exports = router;

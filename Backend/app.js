@@ -11,6 +11,7 @@ const profileRouter = require('./src/routes/profileRoutes');
 const chatRouter=require('./src/routes/chatRoutes');
 const userNameRouter=require('./src/routes/userRoutes');
 const recRouter=require('./src/routes/recRoutes');
+const libraryRouter=require( './src/routes/libraryRoutes');
 
 require('./db');
 
@@ -76,6 +77,9 @@ app.use('/user',userNameRouter);
 
 // Mounting profileRouter at /profile
 app.use('/profile', profileRouter);
+
+// Mounting libraryRouter at /library
+app.use('/library' ,libraryRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
