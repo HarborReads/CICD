@@ -1,5 +1,5 @@
-# Use the official Node.js 20 image as the base image
-FROM node:20
+# Define base image
+FROM node:latest
 
 # Set the working directory inside the container
 WORKDIR Frontend/src/App
