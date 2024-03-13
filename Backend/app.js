@@ -11,17 +11,15 @@ const profileRouter = require('./src/routes/profileRoutes');
 const chatRouter=require('./src/routes/chatRoutes');
 const userNameRouter=require('./src/routes/userRoutes');
 const recRouter=require('./src/routes/recRoutes');
+const libraryRouter=require( './src/routes/libraryRoutes');
 
 require('./db');
 
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors({
-  origin: ['http://localhost:5173'],
-  methods:[ "POST","GET"],
-  credentials: true
-}));
+app.use(cors());
+
 
 app.use(cookieParser());
 // Middleware
@@ -76,6 +74,9 @@ app.use('/user',userNameRouter);
 
 // Mounting profileRouter at /profile
 app.use('/profile', profileRouter);
+
+// Mounting libraryRouter at /library
+app.use('/library' ,libraryRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

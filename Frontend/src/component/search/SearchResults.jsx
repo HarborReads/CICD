@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BookInfo from '../Reusables/BookInfo';
 
 // eslint-disable-next-line react/prop-types
@@ -7,6 +8,7 @@ function SearchResults({ searchTerm }) {
   const [searchResults, setSearchResults] = useState([]);
   const userId = "60f6a3b4f8d9a652fc2f2e87";
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
@@ -37,23 +39,27 @@ function SearchResults({ searchTerm }) {
       });
   }, [searchTerm]); // Fetch data whenever the searchTerm changes
 
+  const handleBookClick = (bookId) => {
+    navigate(`/bookpre/${bookId}`);
+  };
+
   if (isLoading) {
     return <div className='text-center text-gray-500'>Loading...</div>;
   }
 
   return (
     <div className="max-w-screen-xl mx-auto px-4">
-      <h2 className="text-2xl font-bold text-gray-700 mb-4 text-center">Search Results</h2> {/* Changed text-white to text-gray-700 */}
+      <h2 className="text-2xl font-bold text-gray-700 mb-4 text-center">Search Results</h2>
       {searchResults.length === 0 ? (
         <div className="text-gray-500 text-center">Enter a query on the search bar to find books</div>
       ) : (
         <div className="overflow-x-auto flex flex-nowrap">
-        {searchResults.map((val) => (
-          <div key={val.id}>
-            <BookInfo book={val}/>
-          </div>
-        ))}
-      </div>
+          {searchResults.map((val) => (
+            <div key={val.bookId} onClick={() => handleBookClick(val.bookId)}>
+              <BookInfo book={val}/>
+            </div>
+          ))}
+        </div>
       )}
       {searchResults.length > 3 && (
         <div className="flex justify-end mt-4">

@@ -4,7 +4,7 @@ const openaiConnection = require('./openAI');
 
 const app = express();
 
-const chatGPT = new openaiConnection("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");
+const chatGPT = new openaiConnection("xxx");
 
 
 app.use(bodyParser.json());
@@ -89,7 +89,7 @@ async function aRgenerateResponse(req, res) {
     }
 }
 
-async function generateRecommendation(req, res) {
+async function aRgenerateRecommendation(req, res) {
     const { messages } = req.body;
     
     // Collect all user messages (questions and answers)
@@ -110,8 +110,8 @@ async function generateRecommendation(req, res) {
 
 
 module.exports = {
-    startConversation,
-    generateResponse,
-    generateRecommendation
+    aRstartConversation,
+    aRgenerateResponse,
+    aRgenerateRecommendation
 
 };

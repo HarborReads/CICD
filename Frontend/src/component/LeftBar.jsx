@@ -1,54 +1,71 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import nLogo from '../icons/newLogo.png';
+import { Link, useLocation } from 'react-router-dom';
+import nLogo from '../assets/newLogoo.png';
 import team from '../icons/team.png';
 import chatbot from '../icons/chatbot.png';
 import search from '../icons/Search.png';
 import home from '../icons/home.png';
 import library from '../icons/library.png';
 import BookSection from './LeftBarBookSection';
-
+import leftImage from '../assets/leftImg.png';
 import '../App.css';
 
 const navItems = [
   { to: '/', icon: home, text: 'Home' },
   { to: '/chatbot', icon: chatbot, text: 'Chatbot' },
   { to: '/search', icon: search, text: 'Search' },
-  { to: '/library', icon: library, text: 'Your Library' },
+  { to: '/library', icon: library, text: 'Personal Library' },
   { to: '/insights', icon: team, text: 'Reading Insights' },
-  { to: '/bookpre', icon: team, text: 'Book Preview' },
 ];
 
-const NavItem = ({ to, icon, text }) => (
-  <li>
-    <Link to={to} className="flex items-center py-2 px-4 hover:bg-gradient-to-r from-nav-bg to-nav-brown- hover rounded-full ">
-      <div className=" rounded-full p-2 mr-2 bg-white hover:bg-nav-brown"> {/* Added background color and padding */}
-        <img src={icon} className="h-6 " alt={text} /> {/* Removed background color for image */}
-      </div>
-      {text}
-    </Link>
-  </li>
-);
+const NavItem = ({ to, icon, text }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+
+  return (
+    <li className='my-1'>
+      <Link
+        to={to}
+        className={`flex items-center py-2 px-4 rounded-full ${
+          isActive
+            ? 'bg-gradient-to-r from-nav-bg to-nav-brownbg-opacity-75'
+            : 'hover:bg-gradient-to-r from-nav-bg to-nav-brown- hover:bg-opacity-75'
+        }`}
+      >
+        <div className={`rounded-lg bg-opacity-65 p-1 ml-2 mr-5 ${isActive ? 'bg-navImg border border-light-brown border-1' : 'hover:bg-navImg'}`}>
+          <img src={icon} className="h-6" alt={text} />
+        </div>
+        {text}
+      </Link>
+    </li>
+  );
+};
 
 function LeftBar() {
-   return (
-     <div className="left-bar-container">
-       <aside className="bg-white text-grey 700 flex flex-col h-screen"> {/* Changed background color and text color */}
-         <div className="p-4 flex items-center">
-           <img src={nLogo} className=" h-50" alt="Logo" />
-         </div>
-         <nav className="py-2 flex-grow"> {/* Added flex-grow class */}
-           <ul>
-             {navItems.map((item, index) => (
-               <NavItem key={index} {...item} />
-             ))}
-           </ul>
-         </nav>
-         <div >
-              <BookSection/ >
-         </div>
-       </aside>
-     </div>
-   );
- }
+  return (
+    <div className="left-bar-container">
+      <aside className="bg-white text-black flex flex-col h-screen">
+        <div className="p-4 flex items-center">
+          <img src={nLogo} className="h-55" alt="Logo" />
+        </div>
+        <nav className="py-2 flex-grow">
+          <ul>
+            {navItems.map((item, index) => (
+              <NavItem key={index} {...item} />
+            ))}
+          </ul>
+        </nav>
+        <div className="bg-grey">
+        <div className="h-1 bg-brown"></div>
+        <img src={leftImage} className=" ml-2 h-55" alt="Imge" />
+
+           <BookSection />
+           <div className="h-1 bg-brown"></div>
+          
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 export default LeftBar;

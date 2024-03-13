@@ -20,7 +20,7 @@ async function getHighlyRatedBooks(req,res) {
     
     // Extract relevant book information from the filtered books
     const books = filteredBooks.map(item => ({
-      id: item.id,
+      bookId: item.id,
       title: item.volumeInfo.title,
 
       authors: item.volumeInfo.authors,
