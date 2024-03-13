@@ -3,26 +3,35 @@ const bodyParser = require('body-parser');
 const openaiConnection = require('./openAI'); 
 
 const app = express();
-const chatGPT = new openaiConnection("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");
+const chatGPT = new openaiConnection("XXX");
 
 app.use(bodyParser.json());
 
 // Define static questions
 const staticQuestions = [
-    "Hey Let's talk about a book",
-    "Describe a character from a book or movie that you found particularly compelling. What traits did they have that you liked?",
-    "Share a memorable moment from a story you've read that combined both action and deep emotional moments. How did it impact you?",
-    "Think about a book that completely immersed you. What made it so engaging for you?",
-    "Discuss some of your favorite movies, TV shows, or games. What do you enjoy about them and how do they influence your reading preferences?",
-    "Reflect on topics or themes in your life that you find interesting or significant. How would you like to see them explored in a story?"
+    "Hey there! 📚 Ready to dive into a book review? Share with me the title of a book you've recently read, and let's discuss it together!",
+    "How would you describe your overall experience with the book in just a few words?",
+    "Did any character surprise you with their development or actions?",
+    "What specific scene or dialogue from the story resonated with you the most? If so, why did it stand out to you?",
+    "What themes or messages did you take away from ? ",
+    "If someone asked you if they should read this book, what would you say and why ? ",
+    "It's been great chatting with you about your book! 🌟 Thank you for sharing your thoughts and insights. If you ever want to chat about books again or need recommendations, feel free to stop by. Happy reading! 📖😊"
+
 ];
 
 // Initialize question index
 let questionIndex = 0;
 
 async function analyzeResponseWithGPT(userResponse, questionAsked) {
-    const promptDirectReply = `Is the user's response '${userResponse}' a direct answer to the question '${questionAsked}'? Please respond with 'Yes' or 'No'. If user wants to pass the question then respond with 'Yes'`;
+    const promptDirectReply = `Considering the user's response: '${userResponse}', did the user respond to the question '${questionAsked}'? 
+    Please respond with 'Yes' if the user's response acknowledges the question, even if it lacks specific details. 
+    If the response provides relevant information, respond with 'Yes' as well. 
+    If the user response is completely unrelated or unclear, respond with 'No'. 
+    If the user wants to skip the question, respond with 'Yes'.`;
+    
+    
     const responseDirectReply = await chatGPT.ask(promptDirectReply);
+    console.log("Response Direct Reply:", responseDirectReply);
     return{responseDirectReply};
 }
 
@@ -43,20 +52,39 @@ async function bookChatGenerateResponse(req, res) {
     const responseDirectReply = await responseDirectReplyPromise;
 
     if (responseDirectReply.responseDirectReply.toLowerCase() === 'yes') {
-        const promptEngagingReply = `Reviewing the user's response: '${userResponse}',to the question: "${questionAsked}", Generate a response for an avid reader based on their answer . The response should be engaging and informative, recommending similar books or providing relevant information.(use less than 30 words) Use a friendly tone and tailor the response to the user's input.`;
-        const response = await chatGPT.ask(promptEngagingReply);
-        nextQuestionIndex++;
-        if (nextQuestionIndex < staticQuestions.length - 1) {
-            questionToAsk = staticQuestions[nextQuestionIndex];
+            
+        if (nextQuestionIndex === 0) {
+            bookTitle = userResponse;
         }
-
+        const promptEngagingReply = `Given the user's reply: '${userResponse}' to the question: "${questionAsked}", respond engagingly and very briefly to the users response. and then create a Review for ''${bookTitle}' review should be for the question: '${questionAsked}', the generated review should start by saying my review on this is , make sure to give a different perspective to users , keep the review less than 50 words,  No follow-up questions or recommendations. Act as a book reviewing chatbot , `;
+        const response = await chatGPT.ask(promptEngagingReply);
+    
+            // Code for generating response
+        nextQuestionIndex++; // Increment the question index
+        
+            // Check if there are more questions to ask
+        if (nextQuestionIndex < staticQuestions.length) {
+                questionToAsk = staticQuestions[nextQuestionIndex]; // Update the question to ask
+        
+        } else {
+            // If it's the last question, send a closing message and end the conversation
+            return res.json({ message: "Thank you for the conversation! Have a great day!" });
+        }
+         console.log(questionToAsk);
+        
+            // Respond with the next question along with the chatbot's response
         res.json({
-            question: questionToAsk,
-            response,
-            questionIndex: nextQuestionIndex
+                response: response,
+                question: questionToAsk, // Include the next question
+                questionIndex: nextQuestionIndex
         });
-    } else {
-        const promptSubquestionCheck = `Assume you are a helpful bot and respond ,Reviewing the user's response: '${userResponse}', to the question: '${questionAsked}'. If the user's response contains any subquestions or clarifications related to the topic of the question, or anything that is not a direct answer to the question asked, generate an answer/question/response to users response. If the user's question does not match the asked question, generate a message saying that the question asked is not related to the question.(use less than 20 words)`;
+       
+            
+    }else {
+        const promptSubquestionCheck = `Reviewing the user's response: '${userResponse}' to the question: '${questionAsked}'. 
+        If the user's response includes any subquestions about the question asked : ' ${questionAsked}' , provide helpful response. 
+        If a subquestion isn't related to '${questionAsked}' or if user response is not understandable, provide a response saying answer is not matching with the question in an engaging way,  but dont include any follow-up questions. (Use less than 70 words)`;
+        
         const response = await chatGPT.ask(promptSubquestionCheck);
         res.json({
             question: questionToAsk,
@@ -68,5 +96,6 @@ async function bookChatGenerateResponse(req, res) {
 
 module.exports = {
     bookChatStartConversation,
-    bookChatGenerateResponse
+    bookChatGenerateResponse,
+
 };

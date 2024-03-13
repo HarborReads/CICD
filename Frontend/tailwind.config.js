@@ -26,6 +26,8 @@ module.exports = {
         'icon-bg': '#b56859',
         'right-orange':'#d6833c',
         'green': '#25541e',
+        'navImg': '#c77e71',
+
       },
     },
   },
