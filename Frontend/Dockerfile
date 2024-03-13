@@ -1,4 +1,4 @@
-# Define base image
+# Define the base image
 FROM node:latest
 
 # Set the working directory inside the container
