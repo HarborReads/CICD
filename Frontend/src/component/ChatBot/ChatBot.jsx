@@ -7,7 +7,7 @@ function ChatBot({ userName }) {
   const [messages, setMessages] = useState([]);
   const [botTyping, setBotTyping] = useState(false);
   const [showInitialContent, setShowInitialContent] = useState(true);
-  const [chatType, setChatType] = useState("avidReaderChat");
+  const [chatType, setChatType] = useState("bookChat");
   const [question, setQuestion] = useState('');
   const [userResponse, setUserResponse] = useState('');
   const [botResponse, setBotResponse] = useState('');

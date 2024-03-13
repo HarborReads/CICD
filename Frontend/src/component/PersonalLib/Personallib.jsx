@@ -1,68 +1,111 @@
 import React, { useState, useEffect } from 'react';
-import data from '../search/TemplateData.json';
 import BookInfo from './bookContainers';
 
-function Personallib() {
+function Personallib({ currentSession }) {
   const [shelves, setShelves] = useState([]);
   const [shelfName, setShelfName] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('All');
-  const [showMenuIndex, setShowMenuIndex] = useState(-1);
+  const userId = currentSession.user.id;
 
   useEffect(() => {
-    const savedShelves = localStorage.getItem('shelves');
-    if (savedShelves) {
-      setShelves(JSON.parse(savedShelves));
-    }
+    fetchUserShelves();
   }, []);
+
+  const fetchUserShelves = () => {
+    fetch(`http://localhost:3001/library/shelves`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId })
+    })
+    .then(response => response.json())
+    .then(response => {
+      const { shelves, defaultShelf } = response;
+      const defaultShelfExists = shelves.some(shelf => shelf.name === defaultShelf.name);
+      const updatedShelves = defaultShelfExists ? [...shelves] : [...shelves, defaultShelf];
+      setShelves(updatedShelves);
+    })
+      .catch(error => console.error('Error fetching user shelves:', error));
+  };
 
   const handleAddShelf = () => {
     if (shelfName.trim() !== '') {
-      const newShelves = [...shelves, { name: shelfName, books: [] }];
-      setShelves(newShelves);
-      localStorage.setItem('shelves', JSON.stringify(newShelves));
-      setShelfName('');
+      fetch(`http://localhost:3001/library/addShelf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, shelfName })
+      })
+        .then(response => response.json())
+        .then(() => {
+          setShelves([...shelves, { name: shelfName, books: [] }]);
+          setShelfName('');
+        })
+        .catch(error => console.error('Error adding shelf:', error));
     }
   };
 
   const handleRemoveShelf = (index) => {
-    const newShelves = shelves.filter((shelf, i) => i !== index);
-    setShelves(newShelves);
-    localStorage.setItem('shelves', JSON.stringify(newShelves));
+    const shelfId = shelves[index]._id;
+    fetch(`http://localhost:3001/library/removeShelf`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId, shelfId })
+    })
+      .then(response => response.json())
+      .then(() => {
+        const newShelves = [...shelves];
+        newShelves.splice(index, 1);
+        console.log(newShelves);
+        setShelves(newShelves);
+      })
+      .catch(error => console.error('Error removing shelf:', error));
   };
 
-  const handleRemoveBook = (shelfIndex, bookToRemove) => {
+  const handleUpdateBookState = (shelfIndex, bookToUpdate, newState) => {
     const updatedShelves = shelves.map((shelf, index) => {
       if (index === shelfIndex) {
         return {
           ...shelf,
-          books: shelf.books.filter(book => book !== bookToRemove)
+          books: shelf.books.map(book => {
+            if (book === bookToUpdate) {
+              return {
+                ...book,
+                state: newState
+              };
+            }
+            return book;
+          })
         };
       }
       return shelf;
     });
     setShelves(updatedShelves);
-    localStorage.setItem('shelves', JSON.stringify(updatedShelves));
-  };
-
-  const filterBooksByShelf = (shelfName) => {
-    let filteredBooks = data;
-    if (shelfName !== 'All') {
-      filteredBooks = filteredBooks.filter(book => book.shelf === shelfName);
-      if (selectedFilter !== 'All') {
-        filteredBooks = filteredBooks.filter(book => book.status === selectedFilter);
-      }
-    } else {
-      if (selectedFilter !== 'All') {
-        filteredBooks = filteredBooks.filter(book => book.status === selectedFilter);
-      }
-    }
-    return filteredBooks;
   };
 
   const handleFilterChange = (e) => {
     setSelectedFilter(e.target.value);
   };
 
+  const filterBooksByShelf = (shelfName) => {
+    let filteredBooks = [];
+    shelves.forEach((shelf) => {
+      if (shelf && shelf.name === shelfName || shelfName === 'All') {
+        if (Array.isArray(shelf.books)) {
+          filteredBooks = [...filteredBooks, ...shelf.books];
+        }
+      }
+    });
+    
+    if (selectedFilter !== 'All') {
+      filteredBooks = filteredBooks.filter((book) => book.state === selectedFilter);
+    }
+    return filteredBooks;
+  };
   return (
     <div>
       <div className="mb-4">
@@ -77,7 +120,7 @@ function Personallib() {
             onChange={(e) => setShelfName(e.target.value)}
           />
           <button
-            className='text-white bg-brown rounded w-45 ml-2 mr-2 px-2 py-1 mr-2'// Adjust the margin-right value to your preference
+            className='text-white bg-brown rounded w-45 ml-2 mr-2 px-2 py-1 mr-2'
             onClick={handleAddShelf}
           > 
             Add Shelf
@@ -98,7 +141,7 @@ function Personallib() {
             <div key={shelfIndex} className="mb-4">
               <div className="bg-nav-bg rounded-lg shadow-md p-4 mb-4">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-semibold">{shelf.name}</h2>
+                  <h2 className="text-2xl font-semibold">{shelf && shelf.name}</h2>
                   <button
                     className="text-sm bg-red-500 text-white px-2 py-1 rounded-md mb-2"
                     onClick={() => handleRemoveShelf(shelfIndex)}
@@ -107,14 +150,20 @@ function Personallib() {
                   </button>
                 </div>
                 <div className="flex overflow-x-auto">
-                  {filterBooksByShelf(shelf.name).map((book, bookIndex) => (
-                    <div key={bookIndex} className="flex items-center">
-                      <BookInfo book={book} onRemove={() => handleRemoveBook(shelfIndex, book)} />
-                    </div>
-                  ))}
-                </div>
+                {filterBooksByShelf(shelf && shelf.name).map((book, bookIndex) => (
+                  <div key={bookIndex} className="flex items-center">
+                    <BookInfo
+                      bookId={book}
+                      shelf={shelf}
+                      userId={userId}
+                      setShelves={setShelves}
+                      onUpdateState={(newState) => handleUpdateBookState(shelf, book, newState)}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
+          </div>
           ))}
         </div>
       </div>

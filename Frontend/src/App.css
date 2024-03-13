@@ -39,16 +39,9 @@ body, h1, h2, h3, p {
  /* Add border radius */
   overflow: hidden; /* Ensure content inside does not overflow */
   max-height: 100vh; /* Limit the height of the content pane to the viewport height */
-  background-color: #fefeff; /* Teal 50 */
+  background-color: #bc6161; /* Teal 50 */
   
 }
-.left-bar-container {
-    /* Add border radius */
-     overflow: hidden; /* Ensure content inside does not overflow */
-     max-height: 100vh; /* Limit the height of the content pane to the viewport height */
-     background-color: #fefeff; /* Teal 50 */
-     
-   }
 
 .right-bar-container {
     /* Add border radius */

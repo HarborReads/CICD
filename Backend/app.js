@@ -18,11 +18,8 @@ require('./db');
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors({
-  origin: ['http://localhost:5173'],
-  methods:[ "POST","GET"],
-  credentials: true
-}));
+app.use(cors());
+
 
 app.use(cookieParser());
 // Middleware
