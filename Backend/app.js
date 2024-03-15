@@ -13,12 +13,6 @@ const userNameRouter=require('./src/routes/userRoutes');
 const recRouter=require('./src/routes/recRoutes');
 const libraryRouter=require( './src/routes/libraryRoutes');
 
-var connect = require("connect");
-
-var app = connect.createServer().use(connect.static(__dirname + '/app'));
-
-app.listen(3001);
-
 require('./db');
 
 const app = express();
