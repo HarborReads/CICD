@@ -1,8 +1,8 @@
-# Define the base image
+# Define base image
 FROM node:latest
 
 # Define work directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./

@@ -1,8 +1,8 @@
-# Define the base image
+# Define base image
 FROM node:latest
 
 # Set the working directory inside the container
-WORKDIR Frontend/src/App
+WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 5173
 
 # Start the app
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
